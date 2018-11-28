@@ -3,6 +3,7 @@
 const path = require('path')
 const Vue = require('vue')
 const vueSSR = require('vue-server-renderer')
+const requireFromString = require('require-from-string')
 
 const ENGINE = {
   config: {
@@ -38,19 +39,6 @@ module.exports = () => {
     this.additionalTemplates.forEach(file => {
       this.templateFuncs[path.parse(file).name] = fs.readFileSync(file, 'utf8')
     })
-  }
-
-  /**
-    * Requires a string as a module
-    *
-    * @return {function} The compiled function.
-    */
-
-   VueJS.prototype._requireFromString = function (src) {
-    const Module = module.constructor
-    const m = new Module()
-    m._compile(src, '')
-    return m.exports
   }
 
   /**
@@ -105,7 +93,7 @@ module.exports = () => {
     */
   VueJS.prototype.render = function (name, data, locals, options) {
     // Load this page script tag as the module
-    let app = this._requireFromString(data.split('<script>').pop().split('</script>')[0])
+    let app = requireFromString(data.split('<script>').pop().split('</script>')[0])
 
     // Add in the template as a string
     app.template = data.split('<template>').pop().split('</template>')[0].trim()
@@ -113,19 +101,8 @@ module.exports = () => {
     // Init Vue
     const vm = new Vue(app)
 
-    console.log('*********')
-    console.log(locals)
-    console.log('*********')
-
     // Add local data to the context
     vm.context = Object.assign({}, vm.context, locals)
-
-
-
-
-    console.log('*********')
-    console.log(vm.$data)
-    console.log('*********')
 
     // Create a renderer
     const renderer = vueSSR.createRenderer({
