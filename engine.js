@@ -4,8 +4,6 @@ const path = require('path')
 const Vue = require('vue')
 const vueSSR = require('vue-server-renderer')
 
-const requireFromString = require('require-from-string')
-
 const ENGINE = {
   config: {
     layout: 'layout',
@@ -40,6 +38,19 @@ module.exports = () => {
     this.additionalTemplates.forEach(file => {
       this.templateFuncs[path.parse(file).name] = fs.readFileSync(file, 'utf8')
     })
+  }
+
+  /**
+    * Requires a string as a module
+    *
+    * @return {function} The compiled function.
+    */
+
+   VueJS.prototype._requireFromString = function (src) {
+    const Module = module.constructor
+    const m = new Module()
+    m._compile(src, '')
+    return m.exports
   }
 
   /**
@@ -93,19 +104,37 @@ module.exports = () => {
     * @return {Promise} A Promise that resolves with the render result.
     */
   VueJS.prototype.render = function (name, data, locals, options) {
-    let vueobj = requireFromString(data.split('<script>').pop().split('</script>')[0])
+    // Load this page script tag as the module
+    let app = this._requireFromString(data.split('<script>').pop().split('</script>')[0])
 
-    vueobj.template = data.split('<template>').pop().split('</template>')[0].trim()
+    // Add in the template as a string
+    app.template = data.split('<template>').pop().split('</template>')[0].trim()
 
-    const app = new Vue(vueobj)
+    // Init Vue
+    const vm = new Vue(app)
 
+    console.log('*********')
+    console.log(locals)
+    console.log('*********')
+
+    // Add local data to the context
+    vm.context = Object.assign({}, vm.context, locals)
+
+
+
+
+    console.log('*********')
+    console.log(vm.$data)
+    console.log('*********')
+
+    // Create a renderer
     const renderer = vueSSR.createRenderer({
       template: this.templateFuncs[ENGINE.config.layout],
       clientManifest
     })
 
     return new Promise((resolve, reject) => {
-      renderer.renderToString(app, locals, (err, html) => {
+      renderer.renderToString(vm, locals, (err, html) => {
         if (err) {
           throw err
           return reject({

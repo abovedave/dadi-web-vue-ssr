@@ -13,14 +13,14 @@
 <script>
 module.exports = {
   name: 'app',
-  data: function () {
+  data () {
     return {
       context: {},
       name: 'John'
     }
   },
   methods: {
-    greet: function (event) {
+    greet (event) {
       // `this` inside methods points to the Vue instance
       alert('Hello ' + this.name + '!')
       // `event` is the native DOM event

@@ -2,7 +2,7 @@
   "name": "dadi-web-vue-ssr",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --env production"
@@ -12,7 +12,6 @@
   "dependencies": {
     "@dadi/web": "^6.1.0",
     "axios": "^0.18.0",
-    "require-from-string": "^2.0.2",
     "vue": "^2.5.17",
     "vue-server-renderer": "^2.5.17"
   },
