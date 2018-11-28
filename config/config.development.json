@@ -1,0 +1,8 @@
+{
+  "allowDebugView": true,
+  "app": {
+    "name": "my.dadi.cloud"
+  },
+  "cluster": false,
+  "debug": true
+}

@@ -1,0 +1,1 @@
+require('@dadi/web')({'engines': [require('./engine')]})
