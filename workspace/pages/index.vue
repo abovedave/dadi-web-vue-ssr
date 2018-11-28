@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <p>{{ context.page.name }}</p>
     <h1>Hello {{ name }}</h1>
     <input
       autofocus
@@ -19,13 +18,6 @@ module.exports = {
       context: {},
       name: 'John'
     }
-  },
-  mounted () {
-    axios
-      .get('?json=true')
-      .then(res => {
-        this.context = res.data
-      })
   }
 }
 </script>

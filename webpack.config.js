@@ -4,7 +4,7 @@ const webpack = require('webpack')
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
 
 module.exports = {
-  entry: './workspace/entry.js',
+  entry: './workspace/app.js',
   output: {
     path: path.resolve(__dirname, './workspace/public'),
     publicPath: '/',
